@@ -73,13 +73,17 @@ app.get('/bills', async (req, res) => {
     const token = req.headers['x-access-token']
 
     try {
+        const currentMonth = new Date().getMonth() + 1
         const decoded = jwt.verify(token, secret)
         const email = decoded.email
+
         const user = await User.findOne({ email })
-        return { status: 'ok', qoute: user.quote }
+        const billsFromCurrentMonth = user.bills.filter(bill => new Date(bill.date).getMonth() + 1 === currentMonth)
+
+        return res.json({ status: 'ok', bills: billsFromCurrentMonth })
     } catch (err) {
-        console.log(err)
-        res.json({ status: 'error', error: 'invalid token', })
+
+        throw res.json({ status: 'error', error: 'invalid token', })
     }
 })
 
@@ -89,12 +93,33 @@ app.post('/bills', async (req, res) => {
     try {
         const decoded = jwt.verify(token, secret)
         const email = decoded.email
-        const user = await User.findOne({ email }, { $set: { quote: req.body.quote } })
-        return { status: 'ok', quote: user.quote }
+        const user = await User.findOne({ email })
+
+
+        await User.updateOne({ email }, { $set: { bills: [...user.bills, req.body.bills] } })
+
+        return res.json({ status: 'ok' })
     } catch (err) {
-        console.log(err)
-        res.json({ status: 'error', error: 'invalid token', })
+
+        throw res.json({ status: 'error', error: 'invalid token', })
     }
 })
+
+app.post('/deleteBills', async (req, res) => {
+    const token = req.headers['x-access-token']
+
+    try {
+        const decoded = jwt.verify(token, secret)
+        const email = decoded.email
+
+        await User.updateOne({ email }, { $set: { bills: [] } })
+
+        return res.json({ status: 'ok' })
+    } catch (err) {
+
+        throw res.json({ status: 'error', error: 'invalid token', })
+    }
+})
+
 
 app.listen(4000)
