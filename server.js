@@ -18,6 +18,10 @@ const app = express();
 app.use(express.json())
 app.use(cors())
 
+app.options('/*', (_, res) => {
+    res.sendStatus(200);
+});
+
 app.get('/', (req, res) => {
     res.send('Ok')
 })
