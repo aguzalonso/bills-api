@@ -1,10 +1,12 @@
 import express from 'express';
-import bodyParser from 'body-parser';
-import cookieParser from 'cookie-parser';
+// import bodyParser from 'body-parser';
+// import cookieParser from 'cookie-parser';
 import mongoose from 'mongoose';
 import User from './models/user.js';
 import cors from 'cors';
 import jwt from 'jsonwebtoken';
+
+const router = express.Router()
 
 const secret = '420cosmico'
 
@@ -18,12 +20,20 @@ const app = express();
 app.use(express.json())
 app.use(cors())
 
-app.get('/*', (_, res) => {
-    res.sendStatus(200);
-});
+router.get('/', (req, res) => {
+    try {
+        res.json({
+            status: 200,
+            message: 'Get data has successfully'
+        })
+    } catch (err) {
+        console.log(err);
+        return res.status(500).send()
+    }
+})
 
-app.get('/', (req, res) => {
-    res.send('Ok')
+app.get('/test', async (req, res) => {
+    return res.json({ message: 'Esto esta funcionando' })
 })
 
 app.post('/login', async (req, res) => {
