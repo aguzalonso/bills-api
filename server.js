@@ -5,11 +5,8 @@ import mongoose from 'mongoose';
 import User from './models/user.js';
 import cors from 'cors';
 import jwt from 'jsonwebtoken';
-
-
-const product = require('./api/test')
-
-const router = express.Router()
+import test from './api/test.js'
+import sendData from './api/postData.js'
 
 const secret = '420cosmico'
 
@@ -25,19 +22,7 @@ app.use(cors())
 
 const PORT = process.env.PORT || 4000
 
-router.get('/test', (req, res) => {
-    try {
-        res.json({
-            status: 200,
-            message: 'Get data has successfully'
-        })
-    } catch (err) {
-        console.log(err);
-        return res.status(500).send()
-    }
-})
-
-app.use('/test', product)
+app.use('/test', test)
 
 app.post('/login', async (req, res) => {
     const user = await User.findOne({
@@ -100,6 +85,8 @@ app.get('/bills', async (req, res) => {
         throw res.json({ status: 'error', error: 'invalid token', })
     }
 })
+
+// app.use('/bills', sendData)
 
 app.post('/bills', async (req, res) => {
     const token = req.headers['x-access-token']
