@@ -6,6 +6,9 @@ import User from './models/user.js';
 import cors from 'cors';
 import jwt from 'jsonwebtoken';
 
+
+const product = require('./api/test')
+
 const router = express.Router()
 
 const secret = '420cosmico'
@@ -22,7 +25,7 @@ app.use(cors())
 
 const PORT = process.env.PORT || 4000
 
-router.get('/', (req, res) => {
+router.get('/test', (req, res) => {
     try {
         res.json({
             status: 200,
@@ -34,9 +37,7 @@ router.get('/', (req, res) => {
     }
 })
 
-app.get('/test', async (req, res) => {
-    return res.json({ message: 'Esto esta funcionando' })
-})
+app.use('/test', product)
 
 app.post('/login', async (req, res) => {
     const user = await User.findOne({
